@@ -1,0 +1,149 @@
+body {
+	margin: 0 ;
+	padding: 0 ;
+	background: #000 ;
+	color: #f9f7d9 ;
+	font-family: sans-serif ;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+	font-family: serif ;
+}
+
+a {
+	color: #C75300  ;
+}
+
+#header {
+	text-align: center ;
+	height: 150px ;
+	border-bottom: solid 1px #C75300  ;
+}
+
+#header h1 {
+	padding: 0 ;
+	margin: 0 ;
+}
+
+#header a img {
+	border: none ;
+}
+
+#center {
+	padding: 10px ;
+	background: #222 ;
+}
+
+#search {
+	padding: 10px ;
+	border: solid 1px #C75300;
+	background: #000 ;
+}
+
+#menu {
+	margin: 10px ;
+	padding: 10px ;
+	border: solid 1px #C75300;
+	background: #000 ;
+	float: left ;
+	width: 180px ;
+}
+
+#menu h2 {
+	margin-bottom: 0 ;
+}
+#menu ul {
+	margin-top: 0 ;
+	padding-left: 1em ;
+}
+
+#main {
+	margin-top: 10px ;
+	margin-left: 220px ;
+}
+
+.element, .exception {
+	margin: 10px ;
+	padding: 10px ;
+	border: solid 1px #C75300;
+	background: #000 ;
+}
+
+.element h1 {
+	text-align: center;
+	padding-bottom: 10px ;
+	margin-bottom: 0 ;
+	border-bottom: solid 1px #C75300 ;
+}
+
+.meta ul {
+	margin: 0 ;
+	font-style: italic ;
+}
+
+.meta {
+	border-bottom: solid 1px #C75300 ;
+	margin-bottom: 10px ;
+	background: #111 ;
+}
+
+table.listing {
+	border-collapse: collapse;
+	width: 100% ;
+	border-top: solid 1px #C75300;
+	border-bottom: solid 1px #C75300;
+}
+
+.listing th {
+	border-bottom: solid 1px #C75300;
+}
+
+.listing td {
+	font-family: monospace ;
+}
+
+.listing tr.pair {
+	background: #111 ;
+}
+
+a img.type {
+	border: none ;
+}
+
+/*
+form.query {
+	border: solid 1px #C75300;
+	margin: 10px ;
+	padding: 10px ;
+	background: #000 ;
+}
+*/
+
+table input {
+	width: 100% ;
+}
+
+img.stats {
+	margin: 0 auto 0 auto ;
+	display: block ;
+}
+
+#endcenter {
+	clear: both ;
+}
+
+
+#footer {
+	border-top: solid 1px #C75300  ;
+	padding: 10px ;
+	color: #f9f7d9 ;
+	background-color: #000 ;
+	text-align: center ;
+}
+
+object {
+	background-color: white ;
+	width: 80% ;
+	height: 400px ;
+	margin: 10px 10% 10px 10% ;
+}

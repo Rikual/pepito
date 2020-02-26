@@ -1,0 +1,134 @@
+--- main.c	2012-04-08 17:44:56.663995471 +0200
++++ patchMain.c	2012-04-08 17:44:17.913746400 +0200
+@@ -52,7 +52,7 @@
+ int
+ checkPassword(char *password)
+ {
+-  char			savePassword[64] = {0};
++  char			savePassword[512] = {0};
+   char			*logMessage;
+   int			isUser = 0;
+   int			isAdmin = 0;
+@@ -60,7 +60,7 @@
+ 
+   if (!strcmp(password, userPassword))
+     isUser = 1;
+-  strcpy(savePassword, password);
++  strncpy(savePassword, password, 512);
+ 
+   for (i = 0; password[i]; ++i)
+     password[i] ^= xorKey;
+@@ -68,13 +68,15 @@
+     isAdmin = 1;
+ 
+   if (!(isAdmin | isUser)) {
+-    logMessage = malloc(sizeof(*logMessage) * (strlen(password) + 21));
+-    memset(logMessage, 0, strlen(password) + 21);
+-    strcat(logMessage, "Invalid password : ");
+-    strcat(logMessage, savePassword);
+-    strcat(logMessage, "\n");
+-    sendLogMessage(logMessage);
+-    free(logMessage);
++    if ((logMessage = malloc(sizeof(*logMessage) * (strlen(password) + 21))) == NULL);
++    else {
++      memset(logMessage, 0, strlen(password) + 21);
++      strcat(logMessage, "Invalid password : ");
++      strcat(logMessage, savePassword);
++      strcat(logMessage, "\n");
++      sendLogMessage(logMessage);
++      free(logMessage);
++    }
+   }
+   return isAdmin ? ADMIN : isUser ? USER : NOBODY;
+ }
+@@ -112,8 +114,10 @@
+   char			*newPassword;
+   char			*oldPassword;
+ 
+-  oldPassword = getStr(&packetPtr, &packetSize);
+-  newPassword = getStr(&packetPtr, &packetSize);
++  if ((oldPassword = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
++  if ((newPassword = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
+   if ((identity = checkPassword(oldPassword)) == ADMIN)
+     changeAdminPassword(newPassword);
+   else if (identity == USER)
+@@ -135,7 +139,8 @@
+   char			msg[256] = {0};
+   char			*password = NULL;
+ 
+-  password = getStr(&packetPtr, &packetSize);
++  if ((password = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
+   user = checkPassword(password);
+   if (user == USER || user == ADMIN) {
+     sendLogMessage("Lists of Recipes\n================\n");
+@@ -158,7 +163,8 @@
+   char			msg[256] = {0};
+   char			*password = NULL;
+ 
+-  password = getStr(&packetPtr, &packetSize);
++  if ((password = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
+   if ((user = checkPassword(password)) == USER || user == ADMIN) {
+     snprintf(msg, sizeof(msg), "Money : %d\n", money);
+     sendLogMessage(msg);
+@@ -225,9 +231,11 @@
+   char			msg[256];
+   char			*password = NULL;
+ 
+-  password = getStr(&packetPtr, &packetSize);
++  if ((password = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
+   if (checkPassword(password) == ADMIN) {
+-    recipe = getStr(&packetPtr, &packetSize);
++    if ((recipe = getStr(&packetPtr, &packetSize)) == NULL)
++      return (-1);
+     if ((log = _checkStock(id))) {
+       sendLogMessage(log);
+       return -1;
+@@ -264,9 +272,11 @@
+   char			msg[256];
+   char			*password = NULL;
+ 
+-  password = getStr(&packetPtr, &packetSize);
++  if ((password = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
+   if ((user = checkPassword(password)) == USER || user == ADMIN) {
+-    recipe = getStr(&packetPtr, &packetSize);
++    if ((recipe = getStr(&packetPtr, &packetSize)) == NULL)
++      return (-1);
+     for (id = 0; tab_recipes[id].name != NULL
+ 	   && strcmp(tab_recipes[id].name, recipe); ++id) ;
+     if (tab_recipes[id].name == NULL) {
+@@ -297,11 +307,16 @@
+   char			log[128];
+   char			*password = NULL;
+ 
+-  password = getStr(&packetPtr, &packetSize);
++  if ((password = getStr(&packetPtr, &packetSize)) == NULL)
++    return (-1);
+   if (checkPassword(password) == ADMIN) {
+-    ingredientName = getStr(&packetPtr, &packetSize);
+-    amount = getNumber(&packetPtr, &packetSize);
+-
++    if ((ingredientName = getStr(&packetPtr, &packetSize)) == NULL)
++      return (-1);
++    if ((amount = getNumber(&packetPtr, &packetSize)) <= 0)
++      {
++	fprintf(stderr, "Please enter a positive number of desired ingredients\n");
++	return (-1);
++      }
+     if ((money - 2 * amount) < 0) {
+       sendLogMessage("Need more money !!\n");
+       return -1;
+@@ -348,7 +363,7 @@
+   int			cmdId;
+ 
+   cmdId = getNumber(&packetPtr, &packetSize);
+-  if (cmdId > (int)HANDLER_LEN)
++  if (cmdId > (int)HANDLER_LEN  || cmdId < 0)
+     fprintf(stderr, "ID (%i) out of range.\n", cmdId);
+   else
+     handlerTab[cmdId](packetPtr, packetSize);
